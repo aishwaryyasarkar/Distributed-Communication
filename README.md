@@ -1,1 +1,1 @@
-# proof of concept
+proof of concept for distributed training
