@@ -9,7 +9,7 @@ import time
 
 # Define the server host and port
 HOST = '127.0.0.1'
-PORT = 65400
+PORT = 65430
 
 # Define the number of clients and the range of the matrix dimension
 num_clients = int(input("Enter the number of clients: "))
@@ -22,6 +22,8 @@ global_matrix = np.random.rand(matrix_dim, matrix_dim)
 
 # Create a queue to store client matrix updates
 update_queue = queue.Queue()
+
+# tag first client
 start_client_time = 0
 # Define a function to handle client requests
 def handle_client(conn, addr, unique_matrix):
@@ -60,10 +62,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"Started thread for client {i} with unique matrix:")
         print(unique_matrices[i])
 
-    # Wait for all clients to finish sending their matrices
-    for t in threads:
-        t.join()
-
     # Listen for client matrix updates and perform averaging
     while True:
         if not update_queue.empty():
@@ -71,17 +69,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             matrices = []
             while not update_queue.empty():
                 matrices.append(update_queue.get())
-
-            # Check if all clients have sent their matrices
-            if len(matrices) == num_clients:
-                # Calculate the average of the matrices
-                avg_matrix = np.mean(matrices, axis=0)
-                # Update the global matrix
-                global_matrix = avg_matrix
-                print("Updated global matrix:")
-                print(global_matrix)
-                # Empty the queue
-                update_queue.queue.clear()
+            # Calculate the average of the matrices
+            avg_matrix = np.mean(matrices, axis=0)
+            # Update the global matrix
+            global_matrix = avg_matrix
+            print("Updated global matrix:")
+            print(global_matrix)
         else:
             # If there are no more updates in the queue, break out of the loop
             break

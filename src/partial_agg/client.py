@@ -4,7 +4,7 @@ import pickle
 
 # Define the server host and port
 HOST = '127.0.0.1'
-PORT = 65400
+PORT = 65430
 
 # Define the number of clients to create
 num_clients = 10
